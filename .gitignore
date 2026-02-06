@@ -54,3 +54,10 @@ Thumbs.db
 # FID temporary directories
 fid_real/
 fid_fake/
+
+# IDE history
+.history/
+
+# Claude temporary files
+tmpclaude-*
+*.cwd

@@ -32,9 +32,12 @@ def reconstruction_loss(recon_x, x, loss_type='mse'):
 
 def kl_divergence_loss(mu, logvar):
     """
-    KL divergence loss between learned latent distribution and standard normal
+    最原始的 KL 散度损失函数
+    KL(N(mu, sigma^2) || N(0, 1))
 
-    KL(N(mu, sigma^2) || N(0, 1)) = -0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
+    公式：KL = -0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
+
+    可以在这里修改公式进行实验
 
     Args:
         mu: Mean of the latent distribution
@@ -43,9 +46,17 @@ def kl_divergence_loss(mu, logvar):
     Returns:
         KL divergence loss value
     """
-    # KL divergence formula for Gaussian distributions
-    kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
-    return kl_loss
+    # 计算 sigma^2 (从 logvar 转换)
+    sigma_sq = torch.exp(logvar)
+
+    # KL 散度的每一项：
+    # 1: 常数项
+    # logvar: log(sigma^2)
+    # mu**2: 均值的平方
+    # sigma_sq: 方差
+    kl = -0.5 * torch.sum(1 + logvar - mu**2 - sigma_sq)
+
+    return kl
 
 
 def vae_loss(recon_x, x, mu, logvar, kl_weight=1.0, reconstruction_loss_type='mse'):
